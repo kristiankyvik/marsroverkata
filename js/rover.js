@@ -1,3 +1,23 @@
+move: function (commands) {
+    var actionName;
+    for (var i = 0; i < commands.length; i++) {
+      var c = commands[i];
+      if (!this.actionNameByCommand.hasOwnProperty(c)) {
+        console.log('Unrecognized command: ' + c);
+      }
+      else {
+        actionName = this.actionNameByCommand[c];
+        this[actionName]();
+      }
+    }
+  },
+  actionNameByCommand: {
+    f: 'moveForward',
+    b: 'moveBackward',
+    r: 'turnRight',
+    l: 'turnLeft'
+  },
+
   moveForward: function () {
     this.advance('forward');
   },
