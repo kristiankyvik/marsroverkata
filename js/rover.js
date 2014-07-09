@@ -1,3 +1,9 @@
+function Rover(x, y, orientation, map) {
+  this.position = [x, y];
+  this.orientation = orientation;
+  this.map = map;
+}
+
 move: function (commands) {
     var actionName;
     for (var i = 0; i < commands.length; i++) {
@@ -18,58 +24,54 @@ move: function (commands) {
     l: 'turnLeft'
   },
 
-  moveForward: function () {
-    this.advance('forward');
-  },
-  moveBackward: function () {
-    this.advance('backward');
-  },
-  advance: function (direction) {
-    direction = (direction === 'forward') ? 1 : -1;
-    var X = this.position[0], Y = this.position[1];
-
-    var increment = this.increments[this.orientation];
-    X = (X + increment[0] * direction) % Grid.sizeX;
-    Y = (Y + increment[1] * direction) % Grid.sizeY;
-    if (X < 0) {
-      X += Grid.sizeX;
-    }
-    if (Y < 0) {
-      Y += Grid.sizeY;
-    }
-    if (!Grid.thereIsObstacle(X, Y)) {
-      this.position = [X, Y];
-    }
-  },
-    var increment = this.increments[this.orientation];
-    this.position = [
-      (this.position[0] + increment[0] * direction) % Grid.sizeX,
-      (this.position[1] + increment[1] * direction) % Grid.sizeY
-    ];
-    if (this.position[0] < 0) {
-      this.position[0] = Grid.sizeX + this.position[0];
-    }
-    if (this.position[1] < 0) {
-      this.position[1] = Grid.sizeY + this.position[1];
-    }
-    if (Grid.thereIsObstacle(this.position[0], this.position[1])) {
-      this.position = formerPosition;
-    }
-  },
-
-turnRight: function () {
-    this.turn('right');
-  },
-  turnLeft: function () {
-    this.turn('left')
-  },
-  turn: function (direction) {
-    var currentIndex = this.orientations.indexOf(this.orientation);
-    var newIndex = currentIndex + (direction === 'right' ? 1 : -1);
-    if (newIndex < 0) {
-      newIndex = this.orientations.length + newIndex;
-    }
-    this.orientation = this.orientations[newIndex];
-  },
-  orientations: 'nesw'
+Rover.prototype.moveForward = function () {
+  this.advance('forward');
 };
+
+Rover.prototype.moveBackward = function () {
+  this.advance('backward');
+};
+
+Rover.prototype.advance = function (direction) {
+  direction = (direction === 'forward') ? 1 : -1;
+  var X = this.position[0], Y = this.position[1];
+
+  var increment = this.increments[this.orientation];
+  X = (X + increment[0] * direction) % this.map.sizeX;
+  Y = (Y + increment[1] * direction) % this.map.sizeY;
+  if (X < 0) {
+    X += this.map.sizeX;
+  }
+  if (Y < 0) {
+    Y += this.map.sizeY;
+  }
+  if (!this.map.thereIsObstacle(X, Y)) {
+    this.position = [X, Y];
+  }
+};
+
+Rover.prototype.increments = {
+  n: [0, 1],
+  e: [1, 0],
+  s: [0, -1],
+  w: [-1, 0]
+};
+
+Rover.prototype.turnRight = function () {
+  this.turn('right');
+};
+
+Rover.prototype.turnLeft = function () {
+  this.turn('left')
+};
+
+Rover.prototype.turn = function (direction) {
+  var currentIndex = this.orientations.indexOf(this.orientation);
+  var newIndex = currentIndex + (direction === 'right' ? 1 : -1);
+  if (newIndex < 0) {
+    newIndex = this.orientations.length + newIndex;
+  }
+  this.orientation = this.orientations[newIndex];
+};
+
+Rover.prototype.orientations = 'nesw';
