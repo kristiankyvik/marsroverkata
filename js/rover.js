@@ -1,88 +1,42 @@
-var Rover = {
-  init: function (x, y, orientation) {
-    this.position = [x, y];
-    this.orientation = orientation;
-  },
-  move: function (commands) {
-    for (var i = 0; i < commands.length; i++) {
-      var c = commands[i];
-      switch (c) {
-        case 'f':
-          this.moveForward();
-        break;
-        case 'b':
-          this.moveBackward();
-        break;
-        case 'r':
-          this.turnRight();
-        break;
-        case 'l':
-          this.turnLeft();
-        break;
-        default:
-          console.log('Unrecognized command: ' + c);
-        break;
-      }
-    }
-  },
   moveForward: function () {
-    var formerPosition = [
-      this.position[0],
-      this.position[1]
-    ];
-    switch (this.orientation) {
-      case 'n':
-        this.position[1] = (this.position[1] + 1) % Grid.sizeY;
-      break;
-      case 'e':
-        this.position[0] = (this.position[0] + 1) % Grid.sizeX;
-      break;
-      case 's':
-        this.position[1] = (this.position[1] - 1);
-        if (this.position[1] < 0) {
-          this.position[1] = Grid.sizeY + this.position[1];
-        }
-      break;
-      case 'w':
-        this.position[0] = (this.position[0] - 1);
-        if (this.position[0] < 0) {
-          this.position[0] = Grid.sizeX + this.position[0];
-        }
-      break;
-    }
-    if (Grid.thereIsObstacle(this.position[0], this.position[1])) {
-      this.position = formerPosition;
-    }
+    this.advance('forward');
   },
   moveBackward: function () {
-    var formerPosition = [
-      this.position[0],
-      this.position[1]
+    this.advance('backward');
+  },
+  advance: function (direction) {
+    direction = (direction === 'forward') ? 1 : -1;
+    var X = this.position[0], Y = this.position[1];
+
+    var increment = this.increments[this.orientation];
+    X = (X + increment[0] * direction) % Grid.sizeX;
+    Y = (Y + increment[1] * direction) % Grid.sizeY;
+    if (X < 0) {
+      X += Grid.sizeX;
+    }
+    if (Y < 0) {
+      Y += Grid.sizeY;
+    }
+    if (!Grid.thereIsObstacle(X, Y)) {
+      this.position = [X, Y];
+    }
+  },
+    var increment = this.increments[this.orientation];
+    this.position = [
+      (this.position[0] + increment[0] * direction) % Grid.sizeX,
+      (this.position[1] + increment[1] * direction) % Grid.sizeY
     ];
-    switch (this.orientation) {
-      case 's':
-        this.position[1] = (this.position[1] + 1) % Grid.sizeY;
-      break;
-      case 'w':
-        this.position[0] = (this.position[0] + 1) % Grid.sizeX;
-      break;
-      case 'n':
-        this.position[1] = (this.position[1] - 1);
-        if (this.position[1] < 0) {
-          this.position[1] = Grid.sizeY + this.position[1];
-        }
-      break;
-      case 'e':
-        this.position[0] = (this.position[0] - 1);
-        if (this.position[0] < 0) {
-          this.position[0] = Grid.sizeX + this.position[0];
-        }
-      break;
+    if (this.position[0] < 0) {
+      this.position[0] = Grid.sizeX + this.position[0];
+    }
+    if (this.position[1] < 0) {
+      this.position[1] = Grid.sizeY + this.position[1];
     }
     if (Grid.thereIsObstacle(this.position[0], this.position[1])) {
       this.position = formerPosition;
     }
   },
+
 turnRight: function () {
     this.turn('right');
   },
