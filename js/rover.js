@@ -4,7 +4,7 @@
   moveBackward: function () {
     this.advance('backward');
   },
-  dvance: function (direction) {
+  advance: function (direction) {
     direction = (direction === 'forward') ? 1 : -1;
     var X = this.position[0], Y = this.position[1];
 
